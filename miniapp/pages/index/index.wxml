@@ -1,0 +1,66 @@
+<!--
+  Index Page Template
+  @file pages/index/index.wxml
+  @description Service list display
+-->
+
+<view class="container">
+  <!-- Header -->
+  <view class="header">
+    <text class="header-title">陪玩服务</text>
+    <view class="header-customer" bindtap="onCustomerTap">
+      <text>客服</text>
+    </view>
+  </view>
+
+  <!-- Loading State -->
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+
+  <!-- Error State -->
+  <view wx:elif="{{error}}" class="error">
+    <text>{{error}}</text>
+    <button bindtap="loadServices">重新加载</button>
+  </view>
+
+  <!-- Service List -->
+  <view wx:else class="service-list">
+    <view
+      wx:for="{{services}}"
+      wx:key="id"
+      class="service-item card"
+      data-id="{{item.id}}"
+      bindtap="onServiceTap"
+    >
+      <!-- Service Image -->
+      <view class="service-image">
+        <image
+          src="{{item.imageUrl || '/images/placeholder.jpg'}}"
+          mode="aspectFill"
+          lazy-load
+        ></image>
+      </view>
+
+      <!-- Service Info -->
+      <view class="service-info">
+        <view class="service-header flex-between">
+          <text class="service-name">{{item.name}}</text>
+          <text class="service-category">{{item.category}}</text>
+        </view>
+        <text class="service-description text-secondary">{{item.description}}</text>
+        <view class="service-footer flex-between">
+          <text class="service-price">¥{{item.price}}/小时</text>
+          <text class="service-status {{item.status === 'active' ? 'status-active' : 'status-inactive'}}">
+            {{item.status === 'active' ? '可预约' : '暂不可用'}}
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Empty State -->
+    <view wx:if="{{services.length === 0}}" class="empty">
+      <text>暂无服务</text>
+    </view>
+  </view>
+</view>

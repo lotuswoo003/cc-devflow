@@ -1,0 +1,55 @@
+<!--
+  Customer Service Page Template
+  @file pages/customer/customer.wxml
+  @description Customer service contact information
+-->
+
+<view class="container">
+  <!-- Header -->
+  <view class="header">
+    <text class="header-title">联系我们</text>
+    <text class="header-subtitle">我们随时为您服务</text>
+  </view>
+
+  <!-- Service Hours -->
+  <view class="card service-hours">
+    <view class="card-title">
+      <text>服务时间</text>
+    </view>
+    <view class="card-content">
+      <text class="time-text">{{serviceHours}}</text>
+    </view>
+  </view>
+
+  <!-- Phone Contact -->
+  <view class="card contact-item">
+    <view class="card-title">
+      <text>客服电话</text>
+    </view>
+    <view class="card-content">
+      <text class="contact-value">{{customerPhone}}</text>
+      <button class="btn btn-primary" bindtap="onPhoneCall">拨打电话</button>
+    </view>
+  </view>
+
+  <!-- WeChat Contact -->
+  <view class="card contact-item">
+    <view class="card-title">
+      <text>客服微信</text>
+    </view>
+    <view class="card-content">
+      <text class="contact-value">{{wechatId}}</text>
+      <button class="btn btn-secondary" bindtap="onCopyWechatId">复制微信号</button>
+    </view>
+  </view>
+
+  <!-- Back Button -->
+  <view class="back-button">
+    <button class="btn btn-primary btn-block" bindtap="onBackToHome">返回首页</button>
+  </view>
+
+  <!-- Footer -->
+  <view class="footer">
+    <text class="footer-text">如有任何问题，欢迎随时联系我们</text>
+  </view>
+</view>

@@ -1,0 +1,123 @@
+/**
+ * Customer Service Page Styles
+ * @file pages/customer/customer.wxss
+ */
+
+.container {
+  min-height: 100vh;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+}
+
+.header-title {
+  display: block;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.header-subtitle {
+  display: block;
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+}
+
+/* Service Hours Card */
+.service-hours {
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+}
+
+.service-hours .card-content {
+  padding-top: var(--spacing-sm);
+}
+
+.time-text {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--primary-color);
+}
+
+/* Contact Cards */
+.contact-item {
+  margin-bottom: var(--spacing-md);
+}
+
+.card-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.contact-value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* Buttons */
+.btn {
+  width: 100%;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--text-white);
+}
+
+.btn-primary:active {
+  background-color: var(--primary-active);
+}
+
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.btn-secondary:active {
+  background-color: var(--bg-hover);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* Back Button */
+.back-button {
+  margin-top: var(--spacing-lg);
+  padding: 0 var(--spacing-md);
+}
+
+/* Footer */
+.footer {
+  margin-top: auto;
+  padding-top: var(--spacing-xl);
+  text-align: center;
+}
+
+.footer-text {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
