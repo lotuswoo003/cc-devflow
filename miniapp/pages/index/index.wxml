@@ -13,9 +13,17 @@
     </view>
   </view>
 
-  <!-- Loading State -->
-  <view wx:if="{{loading}}" class="loading">
-    <text>加载中...</text>
+  <!-- Loading State with Skeleton (US-001) -->
+  <view wx:if="{{loading}}" class="service-list">
+    <view class="skeleton-item" wx:for="{{[1,2,3]}}" wx:key="*this">
+      <view class="skeleton-image"></view>
+      <view class="skeleton-content">
+        <view class="skeleton-title"></view>
+        <view class="skeleton-desc"></view>
+        <view class="skeleton-desc"></view>
+        <view class="skeleton-price"></view>
+      </view>
+    </view>
   </view>
 
   <!-- Error State -->
