@@ -1,0 +1,296 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Companion Service Platform - Mock API",
+    "description": "Mock API contract for WeChat Mini-Program development (RM-001 to RM-010). This contract defines the expected request/response schemas for frontend development. Real backend API will implement this contract in RM-009 and be integrated in RM-011.",
+    "version": "1.0.0-mock",
+    "contact": {
+      "name": "Development Team"
+    }
+  },
+  "servers": [
+    {
+      "url": "mock://local",
+      "description": "Mock server (utils/mock.js)"
+    },
+    {
+      "url": "https://api.example.com/api/v1",
+      "description": "Future production server (RM-011)"
+    }
+  ],
+  "paths": {
+    "/services": {
+      "get": {
+        "summary": "Get service list",
+        "description": "Retrieve list of all active companion services. In mock mode, returns static data from utils/mock.js. In production, queries database.",
+        "operationId": "getServices",
+        "tags": ["Services"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success - Returns list of services",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceListResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "data": [
+                    {
+                      "id": "srv_001",
+                      "name": "王者荣耀陪玩",
+                      "description": "专业上分，稳定不坑，段位：王者50星",
+                      "price": 30.0,
+                      "imageUrl": "/images/services/game_wzry.jpg",
+                      "category": "游戏陪玩",
+                      "status": "active"
+                    },
+                    {
+                      "id": "srv_002",
+                      "name": "语音聊天陪伴",
+                      "description": "温柔甜美，解压聊天，让你快乐每一天",
+                      "price": 20.0,
+                      "imageUrl": "/images/services/voice_chat.jpg",
+                      "category": "语音陪玩",
+                      "status": "active"
+                    }
+                  ],
+                  "message": "获取服务列表成功"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 500,
+                  "data": null,
+                  "message": "服务器内部错误",
+                  "details": {
+                    "error": "Database connection failed"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/services/{id}": {
+      "get": {
+        "summary": "Get service detail",
+        "description": "Retrieve detailed information for a specific service by ID. In mock mode, searches static data. In production, queries database.",
+        "operationId": "getServiceById",
+        "tags": ["Services"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Service unique identifier (UUID or mock ID like 'srv_001')",
+            "schema": {
+              "type": "string",
+              "example": "srv_001"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success - Returns service detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceDetailResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "data": {
+                    "id": "srv_001",
+                    "name": "王者荣耀陪玩",
+                    "description": "专业上分，稳定不坑，段位：王者50星，擅长打野和中单位置",
+                    "price": 30.0,
+                    "imageUrl": "/images/services/game_wzry.jpg",
+                    "category": "游戏陪玩",
+                    "status": "active"
+                  },
+                  "message": "获取服务详情成功"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 404,
+                  "data": null,
+                  "message": "服务不存在"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Service": {
+        "type": "object",
+        "required": ["id", "name", "description", "price", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Service unique identifier (mock: 'srv_XXX', production: UUID v4)",
+            "example": "srv_001"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "description": "Service display name",
+            "example": "王者荣耀陪玩"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Detailed service description",
+            "example": "专业上分，稳定不坑，段位：王者50星"
+          },
+          "price": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "description": "Service price per hour (in CNY)",
+            "example": 30.0
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "Service cover image URL (absolute or relative path)",
+            "example": "/images/services/game_wzry.jpg",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "Service category (e.g., 游戏陪玩, 语音陪玩)",
+            "example": "游戏陪玩",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive"],
+            "description": "Service availability status",
+            "example": "active"
+          }
+        }
+      },
+      "ServiceListResponse": {
+        "type": "object",
+        "required": ["code", "data", "message"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Response code (0 = success, non-zero = error)",
+            "example": 0
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Service"
+            },
+            "description": "Array of service objects"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable response message",
+            "example": "获取服务列表成功"
+          }
+        }
+      },
+      "ServiceDetailResponse": {
+        "type": "object",
+        "required": ["code", "data", "message"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Response code (0 = success, non-zero = error)",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/Service",
+            "description": "Service object"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable response message",
+            "example": "获取服务详情成功"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error code (non-zero integer)",
+            "example": 404
+          },
+          "data": {
+            "type": "object",
+            "nullable": true,
+            "description": "Usually null for error responses"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message",
+            "example": "服务不存在"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional error details (optional)",
+            "nullable": true,
+            "properties": {
+              "field": {
+                "type": "string",
+                "example": "id"
+              },
+              "issue": {
+                "type": "string",
+                "example": "ID 格式不正确"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Services",
+      "description": "Service list and detail endpoints"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "reqId": "RM-001",
+  "title": "小程序项目初始化",
+  "status": "release_complete",
+  "phase": "complete",
+  "phase0_complete": true,
+  "prd_complete": true,
+  "ui_complete": false,
+  "tech_design_complete": true,
+  "epic_complete": true,
+  "dev_complete": true,
+  "qa_complete": true,
+  "release_complete": true,
+  "prUrl": "https://github.com/lotuswoo003/cc-devflow/pull/new/feature/RM-001-%E5%B0%8F%E7%A8%8B%E5%BA%8F%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%A7%8B%E5%8C%96",
+  "createdAt": "2025-11-18T15:30:00+08:00",
+  "updatedAt": "2025-11-20T00:45:00+00:00",
+  "roadmap": {
+    "rmId": "RM-001",
+    "quarter": "Q4-2025",
+    "milestone": "M1-Q4-2025",
+    "cluster": "小程序基础功能",
+    "priority": "P1",
+    "estimatedWeeks": 0.5,
+    "derivedFrom": "新项目"
+  }
+}
