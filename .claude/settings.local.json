@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "SlashCommand(/flow-init \"RM-001|小程序项目初始化\")",
+      "Bash(REQ_ID=\"RM-001\" TITLE=\"小程序项目初始化\" echo \"Parsing input...\" echo \"REQ_ID: $REQ_ID\" echo \"TITLE: $TITLE\" echo \"\" echo \"Validating format...\" if echo \"$REQ_ID\")",
+      "Bash(then echo \"✅ Format valid\" else echo \"❌ Format invalid\" exit 1 fi)",
+      "Bash(REQ_ID=\"RM-001\")",
+      "Bash(TITLE=\"小程序项目初始化\")",
+      "WebSearch",
+      "WebFetch(domain:developers.weixin.qq.com)",
+      "WebFetch(domain:www.bookstack.cn)",
+      "WebFetch(domain:tryon.kivisense.com)",
+      "mcp__context7__resolve-library-id",
+      "Bash(bash:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(if [ -f \"devflow/requirements/RM-001/orchestration_status.json\" ])",
+      "Bash(then cat devflow/requirements/RM-001/orchestration_status.json)",
+      "Bash(else echo '{\"\"status\"\":\"\"not_found\"\"}')",
+      "Bash(fi)",
+      "Bash(if [ -d \"devflow/requirements/RM-001\" ])",
+      "Bash(then ls -la devflow/requirements/RM-001/)",
+      "Bash(else echo \"Directory not found\")",
+      "Bash(git branch:*)",
+      "Skill(cc-devflow-orchestrator)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
