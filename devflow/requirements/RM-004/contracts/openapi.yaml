@@ -1,0 +1,765 @@
+openapi: 3.0.3
+info:
+  title: 陪玩服务平台 - 管理后台 API
+  description: |
+    Vue管理后台API契约规范
+
+    **Status**: Draft (RM-004阶段定义，RM-010实现)
+    **Authentication**: JWT Bearer Token
+    **Base URL**: `/api/v1`
+
+    **Mock Data**: RM-004阶段使用vite-plugin-mock提供Mock响应
+    **Real API**: RM-010阶段由SpringBoot后端实现
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: dev@example.com
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Development Server (SpringBoot)
+  - url: https://api.example.com/api/v1
+    description: Production Server
+
+tags:
+  - name: Authentication
+    description: 认证相关接口
+  - name: Menus
+    description: 菜单权限接口
+  - name: Users
+    description: 用户管理接口 (Future - RM-007)
+
+security:
+  - BearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: 用户登录
+      description: |
+        使用用户名/邮箱和密码登录，返回JWT Token
+
+        **注意**: 密码必须在前端使用SHA256加密后传输
+      operationId: login
+      security: []  # No auth required for login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              admin:
+                summary: 管理员登录
+                value:
+                  username: admin
+                  password: e10adc3949ba59abbe56e057f20f883e  # SHA256("123456")
+                  remember: true
+              operator:
+                summary: 运营人员登录
+                value:
+                  username: operator
+                  password: e10adc3949ba59abbe56e057f20f883e
+                  remember: false
+      responses:
+        '200':
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/LoginResponse'
+              examples:
+                success:
+                  summary: 登录成功
+                  value:
+                    code: 200
+                    data:
+                      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJhZG1pbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAwMDA3MjAwfQ.signature
+                      user:
+                        id: "1"
+                        username: admin
+                        email: admin@example.com
+                        roles:
+                          - id: "1"
+                            name: 管理员
+                            code: ROLE_ADMIN
+                        status: active
+                        createdAt: "2025-01-01T00:00:00Z"
+                        updatedAt: "2025-01-01T00:00:00Z"
+                      permissions:
+                        - "*:*:*"
+                      expiresIn: 7200
+                    message: 登录成功
+                    timestamp: 1700000000000
+        '401':
+          description: 认证失败
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              examples:
+                invalid_credentials:
+                  summary: 用户名或密码错误
+                  value:
+                    code: 401
+                    data: null
+                    message: 用户名或密码错误
+                    timestamp: 1700000000000
+        '403':
+          description: 账户被锁定
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              examples:
+                account_locked:
+                  summary: 账户已锁定
+                  value:
+                    code: 403
+                    data: null
+                    message: 账户已锁定，请联系管理员
+                    timestamp: 1700000000000
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: 用户登出
+      description: 清除服务端Token (可选实现，前端主要清除LocalStorage)
+      operationId: logout
+      responses:
+        '200':
+          description: 登出成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              examples:
+                success:
+                  value:
+                    code: 200
+                    data: null
+                    message: 登出成功
+                    timestamp: 1700000000000
+
+  /auth/userinfo:
+    get:
+      tags:
+        - Authentication
+      summary: 获取当前用户信息
+      description: 根据Token获取当前登录用户的详细信息和权限
+      operationId: getUserInfo
+      responses:
+        '200':
+          description: 获取成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/User'
+              examples:
+                admin:
+                  summary: 管理员信息
+                  value:
+                    code: 200
+                    data:
+                      id: "1"
+                      username: admin
+                      email: admin@example.com
+                      roles:
+                        - id: "1"
+                          name: 管理员
+                          code: ROLE_ADMIN
+                          permissions:
+                            - id: "1"
+                              resource: "*"
+                              action: "*"
+                              code: "*:*:*"
+                      status: active
+                      createdAt: "2025-01-01T00:00:00Z"
+                      updatedAt: "2025-01-01T00:00:00Z"
+                      lastLoginAt: "2025-11-21T17:00:00Z"
+                    message: 获取成功
+                    timestamp: 1700000000000
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: 刷新Token
+      description: 使用Refresh Token获取新的Access Token (可选功能)
+      operationId: refreshToken
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+                  description: Refresh Token
+      responses:
+        '200':
+          description: 刷新成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+                          expiresIn:
+                            type: integer
+        '401':
+          description: Refresh Token无效或过期
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /menus:
+    get:
+      tags:
+        - Menus
+      summary: 获取菜单树
+      description: |
+        根据当前用户权限返回可访问的菜单树
+
+        **权限过滤**: 后端根据用户角色/权限过滤菜单项
+        **树形结构**: 返回完整的父子关系树
+      operationId: getMenuTree
+      responses:
+        '200':
+          description: 获取成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/MenuItem'
+              examples:
+                admin_menus:
+                  summary: 管理员菜单 (所有菜单)
+                  value:
+                    code: 200
+                    data:
+                      - id: "1"
+                        parentId: null
+                        path: "/"
+                        name: Layout
+                        component: layout/index.vue
+                        redirect: /dashboard
+                        meta:
+                          title: 主页
+                          icon: home
+                          hidden: false
+                          alwaysShow: false
+                          noCache: false
+                          breadcrumb: true
+                        sort: 1
+                        children:
+                          - id: "2"
+                            parentId: "1"
+                            path: /dashboard
+                            name: Dashboard
+                            component: views/dashboard/index.vue
+                            meta:
+                              title: Dashboard
+                              icon: dashboard
+                              hidden: false
+                            sort: 1
+                          - id: "3"
+                            parentId: "1"
+                            path: /users
+                            name: Users
+                            component: views/users/index.vue
+                            meta:
+                              title: 用户管理
+                              icon: user
+                              hidden: false
+                              roles:
+                                - ROLE_ADMIN
+                            sort: 2
+                    message: 获取成功
+                    timestamp: 1700000000000
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: 获取用户列表 (分页)
+      description: |
+        获取用户列表，支持分页、排序、筛选
+
+        **Future**: RM-007实现
+      operationId: getUserList
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/OrderParam'
+        - name: keyword
+          in: query
+          description: 搜索关键词 (用户名/邮箱/手机号)
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: 用户状态筛选
+          schema:
+            $ref: '#/components/schemas/UserStatus'
+        - name: roleId
+          in: query
+          description: 角色ID筛选
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 获取成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/PageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT Token认证 (格式: "Bearer {token}")
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: 页码 (从1开始)
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    SizeParam:
+      name: size
+      in: query
+      description: 每页数量
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    SortParam:
+      name: sort
+      in: query
+      description: 排序字段
+      required: false
+      schema:
+        type: string
+        default: createdAt
+    OrderParam:
+      name: order
+      in: query
+      description: 排序方向
+      required: false
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+
+  schemas:
+    ApiResponse:
+      type: object
+      required:
+        - code
+        - message
+        - timestamp
+      properties:
+        code:
+          type: integer
+          description: 业务状态码 (200=成功, 401=未授权, 403=禁止, 500=错误)
+          example: 200
+        data:
+          description: 业务数据 (类型根据具体接口而定)
+        message:
+          type: string
+          description: 提示信息
+          example: 操作成功
+        timestamp:
+          type: integer
+          format: int64
+          description: 响应时间戳 (毫秒)
+          example: 1700000000000
+
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 4
+          maxLength: 50
+          description: 用户名或邮箱
+          example: admin
+        password:
+          type: string
+          minLength: 32
+          maxLength: 64
+          description: 密码 (SHA256加密后的16进制字符串)
+          example: e10adc3949ba59abbe56e057f20f883e
+        captcha:
+          type: string
+          description: 验证码 (可选，未来扩展)
+        remember:
+          type: boolean
+          description: 记住我 (影响Token过期时间)
+          default: false
+
+    LoginResponse:
+      type: object
+      required:
+        - token
+        - user
+        - permissions
+        - expiresIn
+      properties:
+        token:
+          type: string
+          description: JWT Access Token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: Refresh Token (可选)
+        user:
+          $ref: '#/components/schemas/User'
+        permissions:
+          type: array
+          items:
+            type: string
+          description: 权限代码列表 (扁平化)
+          example: ["service:read", "service:write", "user:read"]
+        expiresIn:
+          type: integer
+          description: Token过期时间 (秒)
+          example: 7200
+
+    User:
+      type: object
+      required:
+        - id
+        - username
+        - email
+        - roles
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 用户ID
+        username:
+          type: string
+          minLength: 4
+          maxLength: 16
+          pattern: '^[a-zA-Z0-9_]+$'
+          description: 用户名
+          example: admin
+        email:
+          type: string
+          format: email
+          description: 邮箱
+          example: admin@example.com
+        phone:
+          type: string
+          pattern: '^\+?[1-9]\d{1,14}$'
+          description: 手机号 (E.164格式)
+          example: "+8613800138000"
+        avatar:
+          type: string
+          format: uri
+          description: 头像URL
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+          description: 用户角色列表
+        status:
+          $ref: '#/components/schemas/UserStatus'
+        createdAt:
+          type: string
+          format: date-time
+          description: 创建时间
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新时间
+        lastLoginAt:
+          type: string
+          format: date-time
+          description: 最后登录时间
+
+    Role:
+      type: object
+      required:
+        - id
+        - name
+        - code
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: 角色名称
+          example: 管理员
+        code:
+          type: string
+          pattern: '^ROLE_[A-Z_]+$'
+          description: 角色代码
+          example: ROLE_ADMIN
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+        description:
+          type: string
+          description: 角色描述
+
+    Permission:
+      type: object
+      required:
+        - id
+        - resource
+        - action
+        - code
+      properties:
+        id:
+          type: string
+          format: uuid
+        resource:
+          type: string
+          description: 资源标识
+          example: service
+        action:
+          type: string
+          enum: [read, write, delete, execute]
+          description: 操作类型
+        code:
+          type: string
+          pattern: '^[\w\*]+:[\w\*]+$'
+          description: 权限代码
+          example: service:read
+
+    MenuItem:
+      type: object
+      required:
+        - id
+        - path
+        - name
+        - component
+        - meta
+        - sort
+      properties:
+        id:
+          type: string
+          format: uuid
+        parentId:
+          type: string
+          format: uuid
+          nullable: true
+          description: 父菜单ID (顶级菜单为null)
+        path:
+          type: string
+          description: 路由路径
+          example: /dashboard
+        name:
+          type: string
+          description: 路由名称
+          example: Dashboard
+        component:
+          type: string
+          description: 组件路径
+          example: views/dashboard/index.vue
+        redirect:
+          type: string
+          description: 重定向路径
+        meta:
+          $ref: '#/components/schemas/MenuMeta'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuItem'
+          description: 子菜单列表
+        sort:
+          type: integer
+          description: 排序序号
+          example: 1
+
+    MenuMeta:
+      type: object
+      required:
+        - title
+        - hidden
+      properties:
+        title:
+          type: string
+          description: 菜单标题
+          example: Dashboard
+        icon:
+          type: string
+          description: 图标名称 (Element Plus icon)
+          example: dashboard
+        hidden:
+          type: boolean
+          description: 是否隐藏
+          default: false
+        alwaysShow:
+          type: boolean
+          description: 是否总是显示根菜单
+          default: false
+        noCache:
+          type: boolean
+          description: 是否禁用缓存
+          default: false
+        breadcrumb:
+          type: boolean
+          description: 是否显示在面包屑
+          default: true
+        activeMenu:
+          type: string
+          description: 激活的菜单路径
+        roles:
+          type: array
+          items:
+            type: string
+          description: 允许访问的角色
+        permissions:
+          type: array
+          items:
+            type: string
+          description: 允许访问的权限
+
+    UserStatus:
+      type: string
+      enum: [active, inactive, locked, deleted]
+      description: 用户状态
+
+    PageResponse:
+      type: object
+      required:
+        - list
+        - total
+        - page
+        - size
+        - pages
+      properties:
+        list:
+          type: array
+          items: {}
+          description: 数据列表
+        total:
+          type: integer
+          description: 总记录数
+          example: 100
+        page:
+          type: integer
+          description: 当前页码
+          example: 1
+        size:
+          type: integer
+          description: 每页数量
+          example: 20
+        pages:
+          type: integer
+          description: 总页数
+          example: 5
+
+  responses:
+    Unauthorized:
+      description: 未授权 (Token无效或过期)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example:
+            code: 401
+            data: null
+            message: Token无效或已过期，请重新登录
+            timestamp: 1700000000000
+
+    Forbidden:
+      description: 禁止访问 (权限不足)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example:
+            code: 403
+            data: null
+            message: 权限不足，无法访问该资源
+            timestamp: 1700000000000
+
+    NotFound:
+      description: 资源不存在
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example:
+            code: 404
+            data: null
+            message: 请求的资源不存在
+            timestamp: 1700000000000
+
+    ServerError:
+      description: 服务器错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example:
+            code: 500
+            data: null
+            message: 服务器内部错误，请稍后重试
+            timestamp: 1700000000000
