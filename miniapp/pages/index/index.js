@@ -68,7 +68,14 @@ Page({
   onServiceTap: function (e) {
     const serviceId = e.currentTarget.dataset.id;
 
-    // Navigate to detail page (to be implemented in RM-002)
+    // Service detail page deferred to RM-XXX (per PRD scope decision)
+    // Show toast notification for now
+    wx.showToast({
+      title: '服务详情页开发中',
+      icon: 'none',
+      duration: 2000
+    });
+
     console.log('Navigate to service detail:', serviceId);
   },
 

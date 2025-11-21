@@ -14,7 +14,7 @@ const MOCK_SERVICES = [
     name: '王者荣耀陪玩',
     description: '专业上分，稳定不坑，段位：王者50星，擅长打野和中单位置',
     price: 30.00,
-    imageUrl: '/images/services/game_wzry.jpg',
+    imageUrl: 'https://picsum.photos/seed/srv_001/300/200',
     category: '游戏陪玩',
     status: 'active'
   },
@@ -23,7 +23,7 @@ const MOCK_SERVICES = [
     name: '语音聊天陪伴',
     description: '温柔甜美，解压聊天，让你快乐每一天，支持唱歌和讲故事',
     price: 20.00,
-    imageUrl: '/images/services/voice_chat.jpg',
+    imageUrl: 'https://picsum.photos/seed/srv_002/300/200',
     category: '语音陪玩',
     status: 'active'
   },
@@ -32,7 +32,7 @@ const MOCK_SERVICES = [
     name: '吃鸡陪玩',
     description: '高胜率，枪法精准，带你轻松吃鸡，支持四排和双排模式',
     price: 35.00,
-    imageUrl: '/images/services/game_pubg.jpg',
+    imageUrl: 'https://picsum.photos/seed/srv_003/300/200',
     category: '游戏陪玩',
     status: 'active'
   }
