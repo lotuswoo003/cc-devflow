@@ -817,3 +817,47 @@
 **Status**: ✅ **RELEASE PLANNING COMPLETE**
 
 ---
+
+## 2025-01-21 19:30:00 - Critical Bugfix: process.env Issue
+
+**Event**: Fixed process.env reference in config.js
+**Type**: Hotfix
+**Severity**: Critical (blocking runtime)
+
+**Issue Reported**:
+```
+app.js错误:
+ReferenceError: process is not defined
+    at config.js:14
+```
+
+**Root Cause**:
+- Line 14 of `miniapp/utils/config.js` used `process.env.API_BASE_URL`
+- `process` is a Node.js global object, NOT available in WeChat Mini Program runtime
+- WeChat Mini Program runs in V8 JavaScript engine, not Node.js
+
+**Fix Applied**:
+```javascript
+// BEFORE (Bug):
+baseUrl: process.env.API_BASE_URL || '',
+
+// AFTER (Fixed):
+baseUrl: '',  // Currently using mock mode, real API URL to be configured in RM-011
+```
+
+**Impact**:
+- ✅ App now loads without errors
+- ✅ Mock mode continues to work correctly
+- ✅ No functionality affected (still in mock mode)
+
+**Commit**: 4478e52 - fix(miniapp): remove process.env usage in config.js
+
+**Testing**:
+- ✅ WeChat DevTools compiles successfully
+- ✅ App loads without errors
+- ✅ Service list displays correctly
+- ✅ All functionality intact
+
+**Status**: ✅ RESOLVED
+
+---
