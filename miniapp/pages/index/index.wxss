@@ -62,14 +62,16 @@
   display: flex;
   flex-direction: row;
   background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
+  border-radius: 12rpx;
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition-fast);
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 }
 
 .service-item:active {
-  box-shadow: var(--shadow-md);
+  transform: scale(0.98);
+  opacity: 0.8;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
 }
 
 /* Service Image */
