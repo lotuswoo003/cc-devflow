@@ -16,7 +16,9 @@
   "security_plan_complete": true,
   "security_complete": true,
   "qa_complete": true,
-  "release_complete": false,
+  "release_complete": true,
+  "prUrl": "pending-manual-creation",
+  "releaseStatus": "ready-for-merge",
   "createdAt": "2025-11-21T15:30:00+08:00",
-  "updatedAt": "2025-01-21T18:30:00+08:00"
+  "updatedAt": "2025-01-21T19:00:00+08:00"
 }
