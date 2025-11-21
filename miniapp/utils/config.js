@@ -9,9 +9,9 @@
 
 // API Configuration
 const API_CONFIG = {
-  // Base URL for real API (will be used in RM-011)
-  // Use environment variable or default to empty string
-  baseUrl: process.env.API_BASE_URL || '',
+  // Base URL for real API (will be configured in RM-011)
+  // Currently using mock mode, real API URL to be added later
+  baseUrl: '',
 
   // API timeout in milliseconds
   timeout: 10000,
