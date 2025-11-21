@@ -3,18 +3,19 @@
   "packOptions": {
     "ignore": [
       {
-        "type": "file",
-        "value": ".eslintrc.js"
+        "value": ".eslintrc.js",
+        "type": "file"
       },
       {
-        "type": "file",
-        "value": ".gitignore"
+        "value": ".gitignore",
+        "type": "file"
       },
       {
-        "type": "folder",
-        "value": "node_modules"
+        "value": "node_modules",
+        "type": "folder"
       }
-    ]
+    ],
+    "include": []
   },
   "setting": {
     "bundle": false,
@@ -53,27 +54,12 @@
     "condition": false
   },
   "compileType": "miniprogram",
-  "libVersion": "2.0.0",
-  "appid": "touristappid",
+  "libVersion": "3.11.3",
+  "appid": "wx25fcb9a5b15ea8dc",
   "projectname": "companion-service-miniapp",
-  "condition": {
-    "search": {
-      "list": []
-    },
-    "conversation": {
-      "list": []
-    },
-    "game": {
-      "list": []
-    },
-    "plugin": {
-      "list": []
-    },
-    "gamePlugin": {
-      "list": []
-    },
-    "miniprogram": {
-      "list": []
-    }
+  "condition": {},
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
   }
 }

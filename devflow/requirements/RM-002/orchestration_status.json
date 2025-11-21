@@ -1,0 +1,22 @@
+{
+  "reqId": "RM-002",
+  "title": "小程序首页服务列表",
+  "status": "security_complete",
+  "phase": "qa",
+  "phase0_complete": true,
+  "prd_complete": true,
+  "ui_complete": true,
+  "uiPrototypeGenerated": true,
+  "uiPrototypeFile": "UI_PROTOTYPE.html",
+  "constitutionCheckPassed": true,
+  "tech_design_complete": true,
+  "epic_complete": true,
+  "tasks_complete": true,
+  "dev_complete": true,
+  "security_plan_complete": true,
+  "security_complete": true,
+  "qa_complete": true,
+  "release_complete": false,
+  "createdAt": "2025-11-21T15:30:00+08:00",
+  "updatedAt": "2025-01-21T18:30:00+08:00"
+}

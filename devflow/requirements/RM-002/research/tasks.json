@@ -1,0 +1,88 @@
+{
+  "tasks": [
+    {
+      "id": "R001",
+      "type": "decision",
+      "prompt": "UI Enhancement Scope - What level of UI enhancement is required for RM-002?",
+      "status": "resolved",
+      "decision": "Moderate enhancement - Polish existing design without major redesign",
+      "rationale": "Roadmap states '实现首页UI，展示服务列表' which implies functional UI. Current RM-001 implementation has good foundation. Focus on polishing: improve card styling (shadows, borders, spacing), enhance visual hierarchy, add subtle animations. Avoid major redesign to stay within 1-week timeline.",
+      "alternatives": [
+        "Minimal - Keep current layout, only fix issues (images, pull-refresh): Too basic, doesn't align with 'implement UI' goal",
+        "Significant - Redesign service cards, add filters/sorting: Out of scope, would require 2+ weeks"
+      ],
+      "owner": "prd-writer"
+    },
+    {
+      "id": "R002",
+      "type": "decision",
+      "prompt": "Service Detail Page Scope - Should RM-002 include service detail page?",
+      "status": "resolved",
+      "decision": "Defer detail page to separate requirement (RM-XXX)",
+      "rationale": "Roadmap RM-002 description only mentions '展示服务列表', no detail page mentioned. onServiceTap() currently logs ID. Implementing detail page would add ~8h (50% more work). Keep RM-002 focused on list display. Recommend creating RM-004 or RM-011 for detail page later.",
+      "alternatives": [
+        "Include detail page in RM-002: Would exceed 1-week estimate, blur requirement scope"
+      ],
+      "owner": "prd-writer"
+    },
+    {
+      "id": "R003",
+      "type": "technical",
+      "prompt": "Image Asset Strategy - How to handle service images?",
+      "status": "resolved",
+      "decision": "Use external placeholder URLs (Picsum)",
+      "rationale": "Mock data references non-existent local images. Using Picsum (https://picsum.photos/seed/{id}/300/200) provides: instant implementation, no asset management, works for demonstration, easily replaceable. Format: https://picsum.photos/seed/srv_001/300/200",
+      "alternatives": [
+        "Local placeholders: Requires creating/managing image files, slower",
+        "Remove images: Degrades UI quality, conflicts with 'implement UI' goal"
+      ],
+      "owner": "tech-architect"
+    },
+    {
+      "id": "R004",
+      "type": "technical",
+      "prompt": "Testing Strategy - What testing approach for RM-002?",
+      "status": "resolved",
+      "decision": "Manual testing + Unit tests for data layer",
+      "rationale": "RM-002 is simple list display. Manual testing in WeChat DevTools + real device sufficient for UI. Add unit tests for mock.js (getServices, getServiceById, error cases) to ensure data quality. Defer component/E2E tests to later requirements with complex interactions.",
+      "alternatives": [
+        "Component tests: Too heavy for RM-002 scope, would add 4+ hours",
+        "E2E tests: Overkill for static list display"
+      ],
+      "owner": "qa-tester"
+    },
+    {
+      "id": "R005",
+      "type": "technical",
+      "prompt": "wx:key usage - Confirm current implementation is correct",
+      "status": "resolved",
+      "decision": "Current implementation is correct, use wx:key='id'",
+      "rationale": "Official WeChat docs recommend wx:key for dynamic lists. Current code already uses wx:key='id' on service list. Service.id is unique and immutable (srv_001, srv_002, srv_003). This preserves component state and improves re-render performance. No changes needed.",
+      "alternatives": [
+        "Use wx:key='*this': Only works for primitive values, not applicable here",
+        "Omit wx:key: Framework warns, degrades performance"
+      ],
+      "owner": "tech-architect"
+    },
+    {
+      "id": "R006",
+      "type": "technical",
+      "prompt": "Pull-down refresh - Should we enable it?",
+      "status": "resolved",
+      "decision": "Enable pull-down refresh in index.json",
+      "rationale": "Logic already implemented in index.js (onPullDownRefresh method exists). Only需要在 index.json 添加 'enablePullDownRefresh': true. Improves UX by allowing users to manually refresh service list. Common pattern in WeChat Mini Programs.",
+      "alternatives": [
+        "Keep disabled: User cannot manually refresh, poor UX"
+      ],
+      "owner": "tech-architect"
+    }
+  ],
+  "metadata": {
+    "reqId": "RM-002",
+    "title": "小程序首页服务列表",
+    "generatedAt": "2025-11-21T15:50:00+08:00",
+    "totalTasks": 6,
+    "resolvedTasks": 6,
+    "openTasks": 0
+  }
+}
