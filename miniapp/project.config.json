@@ -53,9 +53,9 @@
     },
     "condition": false
   },
-  "compileType": "miniprogram",
+  "compileType": "game",
   "libVersion": "3.11.3",
-  "appid": "wx25fcb9a5b15ea8dc",
+  "appid": "wxeb37855b7cb5a883",
   "projectname": "companion-service-miniapp",
   "condition": {},
   "editorSetting": {
